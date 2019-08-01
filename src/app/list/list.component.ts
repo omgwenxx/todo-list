@@ -23,8 +23,9 @@ export class ListComponent implements OnInit {
   }
 
   addItem(task: string) {
-    this.todos = this.listService.addItem(task);
+    this.listService.addItem(task);
     this.numTodosLeft++;
+    this.update();
   }
 
   deleteItem(deleteTodo: Todo) {
