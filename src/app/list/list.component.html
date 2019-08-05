@@ -1,11 +1,15 @@
 <input #todo type="text" placeholder="Add New Task" (keydown.enter)="addItem(todo.value); todo.value=''">
 <div class="buttonbar">
-  <button (click)="showAll()" >All</button>
-  <button (click)="showActive()">Active</button>
-  <button (click)="showDone()">Done</button>
-  <button (click)="clearComplete()">Clear Complete</button>
+    <button (click) = "clearComplete()">Clear Complete</button>
+    <button (click) = "showAllTodos()">Show All</button>
+    <button (click) = "showDoneTodos()">Done</button>
+    <button (click) = "showActiveTodos()">Active</button>
 </div>
-<p>Remember what you have to do: {{numTodosLeft}} Items left </p>
+<p>Remember what you have to do: {{(allTodos$ | async | filterActive)?.length}} Items left </p>
 <ul class="list">
-  <app-list-item *ngFor="let todo of todos" [todo]="todo" (clickDelete)="deleteItem($event)" (clickUpdate)="update()"></app-list-item>
+    <app-list-item *ngFor="let todo of (todos$ | async)"
+                   [todo]="todo"
+                   (clickDelete)="deleteItem($event)"
+                   (clickUpdate)="update($event)"></app-list-item>
 </ul>
+

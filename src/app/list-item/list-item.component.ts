@@ -10,7 +10,7 @@ export class ListItemComponent {
 
   @Input() todo: Todo;
   @Output() clickDelete = new EventEmitter<Todo>();
-  @Output() clickUpdate = new EventEmitter();
+  @Output() clickUpdate = new EventEmitter<Todo>();
 
   switchDone() {
     this.todo.done = !this.todo.done;
@@ -22,6 +22,6 @@ export class ListItemComponent {
 
   updateItem() {
     this.switchDone();
-    this.clickUpdate.emit();
+    this.clickUpdate.emit(this.todo);
   }
 }

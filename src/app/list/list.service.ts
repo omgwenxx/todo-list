@@ -1,45 +1,73 @@
-import { Injectable } from '@angular/core';
 import {Todo} from '../todo';
+import {Injectable, OnChanges} from '@angular/core';
+import {AngularFirestore} from '@angular/fire/firestore';
+import {Observable} from 'rxjs';
+import {map, tap} from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class ListService {
+    private todos: Observable<Todo[]>;
+    private databaseName = 'todos';
 
-  private todos: Todo[] = [
-    {id: 1, task: 'Undone1', done: false},
-    {id: 2, task: 'Undone2', done: false},
-    {id: 3, task: 'Undone3', done: false},
-    {id: 4, task: 'Done1', done: true},
-    {id: 5, task: 'Done2', done: true},
-  ];
+    constructor(private database: AngularFirestore) {
+        this.todos = this.database
+            .collection<Todo>(this.databaseName)
+            .valueChanges()
+            .pipe(map((res) => res as Todo[]));
+    }
 
-  constructor() {}
+    addItem(task: string): void {
+        const id = this.database.createId();
+        this.database
+            .collection(this.databaseName)
+            .doc(id)
+            .set({id, task, done: false});
+    }
 
-  addItem(task: string): Todo[] {
-    const id = this.todos.length > 0 ? Math.max(...this.todos.map(todo => todo.id)) + 1 : 1;
-    this.todos.push(new Todo(id, task, false));
-    return this.todos;
-  }
+    deleteItem(deleteTodo: Todo): void {
+        this.database
+            .collection<Todo>(this.databaseName)
+            .doc(deleteTodo.id)
+            .delete();
+    }
 
-  deleteItem(deleteTodo: Todo): Todo[] {
-    this.todos = this.todos.filter(item => item.id !== deleteTodo.id);
-    return this.todos;
-  }
+    getAll(): Observable<Todo[]> {
+        return (this.todos = this.database
+            .collection<Todo>(this.databaseName)
+            .valueChanges());
+    }
 
-  getAll(): Todo[] {
-    return this.todos;
-  }
+    clearComplete() {
+        this.database
+            .collection<Todo>(this.databaseName, (ref) => ref.where('done', '==', true))
+            .get().forEach((snapshot) => {
+                snapshot.docs.forEach((todo) => {
+                    this.database
+                        .collection(this.databaseName)
+                        .doc(todo.id)
+                        .delete();
+                });
+            });
+    }
 
-  getAllActive(): Todo[]  {
-    return this.todos.filter(item => item.done !== true);
-  }
+    updateTodo(updateTodo: Todo) {
+        this.database
+            .collection(this.databaseName)
+            .doc(updateTodo.id)
+            .update({done: updateTodo.done});
+    }
 
-  getAllDone(): Todo[]  {
-    return this.todos.filter(item => item.done === true);
-  }
+    getAllActive(): Observable<Todo[]> {
+        return this.database
+            .collection<Todo>(this.databaseName, (ref) => ref.where('done', '==', false))
+            .valueChanges();
+    }
 
-  getClearComplete(): void {
-    this.todos = this.todos.filter(item => item.done !== true);
-  }
+    getAllDone(): Observable<Todo[]> {
+        return this.database
+            .collection<Todo>(this.databaseName, (ref) => ref.where('done', '==', true))
+            .valueChanges();
+    }
 }

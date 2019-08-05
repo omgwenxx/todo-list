@@ -1,7 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnChanges, OnInit, Input} from '@angular/core';
 import {Todo} from '../todo';
 import {ListService} from './list.service';
-import {ShowOptions} from '../showoptions';
 
 @Component({
   selector: 'app-list',
@@ -10,65 +9,42 @@ import {ShowOptions} from '../showoptions';
 })
 export class ListComponent implements OnInit {
 
-  private todos: Todo[];
-  private numTodosLeft: number;
-  private showMode: ShowOptions;
-
+  private todos$;
+  private allTodos$;
   constructor(private listService: ListService) {}
 
   ngOnInit(): void {
-    this.showAll();
-    this.showMode = ShowOptions.All;
-    this.numTodosLeft = this.todos.filter(item => item.done !== true).length;
+    this.showAllTodos();
   }
 
   addItem(task: string) {
     this.listService.addItem(task);
-    this.numTodosLeft++;
-    this.update();
   }
 
   deleteItem(deleteTodo: Todo) {
     if (deleteTodo.done !== true) {
-      this.numTodosLeft--;
     }
-    this.todos = this.listService.deleteItem(deleteTodo);
+    this.listService.deleteItem(deleteTodo);
   }
 
-  showAll(): void {
-    this.showMode = ShowOptions.All;
-    this.todos = this.listService.getAll();
+  update(updateTodo: Todo) {
+    this.listService.updateTodo(updateTodo);
   }
 
-  showActive(): void  {
-    this.showMode = ShowOptions.Active;
-    this.todos = this.listService.getAllActive();
+  showAllTodos() {
+    this.todos$ = this.listService.getAll();
+    this.allTodos$ = this.todos$;
   }
 
-  showDone(): void  {
-    this.showMode = ShowOptions.Done;
-    this.todos = this.listService.getAllDone();
+  showActiveTodos() {
+    this.todos$ = this.listService.getAllActive();
+  }
+
+  showDoneTodos() {
+    this.todos$ = this.listService.getAllDone();
   }
 
   clearComplete() {
-    this.listService.getClearComplete();
-    this.todos = this.todos.filter(item => item.done !== true);
-  }
-
-  update() {
-    switch (this.showMode) {
-      case ShowOptions.All:
-        this.showAll();
-        this.numTodosLeft = this.todos.filter(item => item.done !== true).length;
-        break;
-      case ShowOptions.Active:
-        this.showActive();
-        this.numTodosLeft = this.todos.filter(item => item.done !== true).length;
-        break;
-      case ShowOptions.Done:
-        this.showDone();
-        this.numTodosLeft = this.listService.getAllActive().length;
-        break;
-    }
+    this.listService.clearComplete();
   }
 }
