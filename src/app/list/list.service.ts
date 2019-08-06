@@ -34,7 +34,8 @@ export class ListService {
   }
 
   getAll(): Observable<Todo[]> {
-    return (this.todos = this.database.collection<Todo>(this.databaseName).valueChanges());
+    return this.database.collection<Todo>(this.databaseName, (ref) =>
+        ref.orderBy('task')).valueChanges();
   }
 
   clearComplete(): Observable<any> {
@@ -67,13 +68,13 @@ export class ListService {
 
   getAllActive(): Observable<Todo[]> {
     return this.database
-      .collection<Todo>(this.databaseName, (ref) => ref.where('done', '==', false))
+      .collection<Todo>(this.databaseName, (ref) => ref.orderBy('task').where('done', '==', false))
       .valueChanges();
   }
 
   getAllDone(): Observable<Todo[]> {
     return this.database
-      .collection<Todo>(this.databaseName, (ref) => ref.where('done', '==', true))
+      .collection<Todo>(this.databaseName, (ref) => ref.orderBy('task').where('done', '==', true))
       .valueChanges();
   }
 

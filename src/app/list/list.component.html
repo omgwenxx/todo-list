@@ -1,10 +1,3 @@
-<input #todo type="text" placeholder="Add New Task" (keydown.enter)="addItem(todo.value); todo.value=''">
-<div class="buttonbar">
-    <button (click) = "clearComplete()">Clear Complete</button>
-    <button (click) = "showAllTodos()">Show All</button>
-    <button (click) = "showDoneTodos()">Done</button>
-    <button (click) = "showActiveTodos()">Active</button>
-</div>
 <input #searchBox id="search-box" type="text" placeholder="Search for Todo..." (input)="search(searchBox.value)">
 
 <ul class="list">
@@ -14,6 +7,15 @@
                    (clickUpdate)="update($event)"
     ></app-list-item>
 </ul>
+
+<input #todo type="text" placeholder="Add New Task" (keydown.enter)="addItem(todo.value); todo.value=''">
+
+<div class="buttonbar">
+    <button (click) = "clearComplete()">Clear Complete</button>
+    <button (click) = "showAllTodos()">Show All</button>
+    <button (click) = "showDoneTodos()">Done</button>
+    <button (click) = "showActiveTodos()">Active</button>
+</div>
 
 <p>Remember what you have to do: {{(allTodos$ | async | filterActive)?.length}} Items left </p>
 <ul class="list">
