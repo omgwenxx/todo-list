@@ -1,6 +1,8 @@
 import { ListService } from './list.service';
 import { Todo } from '../todo';
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-list',
@@ -10,10 +12,27 @@ import { Component, Input, OnChanges, OnInit } from '@angular/core';
 export class ListComponent implements OnInit {
   private todos$;
   private allTodos$;
+  private searchTodos$;
+  private searchTerms = new Subject<string>();
   constructor(private listService: ListService) {}
 
   ngOnInit(): void {
     this.showAllTodos();
+    this.searchTodos$ = this.searchTerms.pipe(
+        // wait 300ms after each keystroke before considering the term
+        debounceTime(300),
+
+        // ignore new term if same as previous term
+        distinctUntilChanged(),
+
+        // switch to new search observable each time the term changes
+        switchMap((term: string) => this.listService.searchTodo(term)),
+    );
+  }
+
+  // Push a search term into the observable stream.
+  search(term: string): void {
+    this.searchTerms.next(term);
   }
 
   addItem(task: string) {

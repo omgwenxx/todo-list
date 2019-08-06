@@ -1,7 +1,7 @@
 import { Todo } from '../todo';
 import { Injectable, OnChanges } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { first, map, switchMap, tap } from 'rxjs/operators';
 
 @Injectable({
@@ -75,5 +75,20 @@ export class ListService {
     return this.database
       .collection<Todo>(this.databaseName, (ref) => ref.where('done', '==', true))
       .valueChanges();
+  }
+
+  searchTodo(searchValue: string): Observable<Todo[]> {
+    if (!searchValue.trim()) {
+      // if not search term, return empty hero array.
+      return of([]);
+    }
+
+    return this.database
+      .collection<Todo>(this.databaseName, (ref) =>
+        ref.orderBy('task')
+            .startAt(searchValue)
+            .endAt(searchValue + '\uf8ff')
+          .limit(10))
+      .valueChanges().pipe(tap(console.log));
   }
 }

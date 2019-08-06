@@ -5,6 +5,16 @@
     <button (click) = "showDoneTodos()">Done</button>
     <button (click) = "showActiveTodos()">Active</button>
 </div>
+<input #searchBox id="search-box" type="text" placeholder="Search for Todo..." (input)="search(searchBox.value)">
+
+<ul class="list">
+    <app-list-item *ngFor="let todo of searchTodos$ | async"
+                   [todo]="todo"
+                   (clickDelete)="deleteItem($event)"
+                   (clickUpdate)="update($event)"
+    ></app-list-item>
+</ul>
+
 <p>Remember what you have to do: {{(allTodos$ | async | filterActive)?.length}} Items left </p>
 <ul class="list">
     <app-list-item *ngFor="let todo of (todos$ | async)"
