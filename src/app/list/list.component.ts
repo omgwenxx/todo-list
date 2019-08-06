@@ -1,14 +1,13 @@
-import {Component, OnChanges, OnInit, Input} from '@angular/core';
-import {Todo} from '../todo';
-import {ListService} from './list.service';
+import { ListService } from './list.service';
+import { Todo } from '../todo';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+  styleUrls: ['./list.component.scss'],
 })
 export class ListComponent implements OnInit {
-
   private todos$;
   private allTodos$;
   constructor(private listService: ListService) {}
@@ -45,6 +44,6 @@ export class ListComponent implements OnInit {
   }
 
   clearComplete() {
-    this.listService.clearComplete();
+    this.listService.clearComplete().subscribe((_) => console.log('SUCESSFULLY DELETED'));
   }
 }

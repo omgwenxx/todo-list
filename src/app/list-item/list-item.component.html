@@ -1,5 +1,5 @@
-<li [ngClass]="todo.done ? 'strikethrough' : 'null'">
-  <input type="checkbox" [checked]="todo.done" (click)="updateItem()">
-  {{todo.task}} {{todo.done}}
+<li [ngClass]="todo.done ? 'done' : 'null'">
   <button class="delete" (click)="deleteItem()">x</button>
+  <input type="checkbox" [checked]="todo.done" (click)="updateItem()">
+                        {{todo.task}}
 </li>

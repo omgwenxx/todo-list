@@ -1,3 +1,29 @@
-.strikethrough {
+.done {
   text-decoration: line-through;
+  background-color: #F8F8F8;
+  color: darkgrey;
 }
+li {
+  padding: 1px 3px 1px 5px;
+  margin-top: 1px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: darkgrey;
+  background-color: #fcfcfc;
+  width: 80%;
+}
+
+button {
+  padding: 0em 5px 1.5px 5px;
+  margin-left: 2px;
+  margin-bottom: 3px;
+  border-radius: 2px;
+}
+
+input {
+  margin-left: 8px;
+  transform: scale(1.50);
+}
+
+input, button {vertical-align:middle;}
+
